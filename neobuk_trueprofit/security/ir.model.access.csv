@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_neobuk_fee_rule_user,neobuk.fee.rule.user,model_neobuk_fee_rule,sales_team.group_sale_salesman,1,0,0,0
+access_neobuk_fee_rule_manager,neobuk.fee.rule.manager,model_neobuk_fee_rule,sales_team.group_sale_manager,1,1,1,1
+access_neobuk_shipping_rule_user,neobuk.shipping.rule.user,model_neobuk_shipping_rule,sales_team.group_sale_salesman,1,0,0,0
+access_neobuk_shipping_rule_manager,neobuk.shipping.rule.manager,model_neobuk_shipping_rule,sales_team.group_sale_manager,1,1,1,1
+access_neobuk_expense_user,neobuk.expense.user,model_neobuk_expense,sales_team.group_sale_salesman,1,0,0,0
+access_neobuk_expense_manager,neobuk.expense.manager,model_neobuk_expense,sales_team.group_sale_manager,1,1,1,1
+access_neobuk_shop_task_user,neobuk.shop.task.user,model_neobuk_shop_task,sales_team.group_sale_salesman,1,1,1,0
+access_neobuk_shop_task_manager,neobuk.shop.task.manager,model_neobuk_shop_task,sales_team.group_sale_manager,1,1,1,1
+access_neobuk_day_close_user,neobuk.day.close.user,model_neobuk_day_close,sales_team.group_sale_salesman,1,1,1,0
+access_neobuk_day_close_manager,neobuk.day.close.manager,model_neobuk_day_close,sales_team.group_sale_manager,1,1,1,1
+access_neobuk_day_close_credit_user,neobuk.day.close.credit.user,model_neobuk_day_close_credit,sales_team.group_sale_salesman,1,1,1,1
+access_neobuk_day_close_credit_manager,neobuk.day.close.credit.manager,model_neobuk_day_close_credit,sales_team.group_sale_manager,1,1,1,1
+access_neobuk_profit_report_user,neobuk.profit.report.user,model_neobuk_profit_report,sales_team.group_sale_salesman,1,0,0,0

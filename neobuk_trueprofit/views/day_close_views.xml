@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="neobuk_day_close_view_form" model="ir.ui.view">
+        <field name="name">neobuk.day.close.form</field>
+        <field name="model">neobuk.day.close</field>
+        <field name="arch" type="xml">
+            <form string="Day Close">
+                <header>
+                    <button name="action_close" type="object" string="Close the Day"
+                            class="oe_highlight" invisible="state == 'closed'"/>
+                    <button name="action_close_anyway" type="object" string="Close Anyway"
+                            confirm="This records an override against your name. Continue?"
+                            invisible="state == 'closed'"/>
+                    <button name="action_view_credit_invoices" type="object"
+                            string="View Debts" invisible="state != 'closed'"/>
+                    <button name="action_print_credit_slips" type="object"
+                            string="Print Credit Slips"
+                            invisible="not credit_line_ids"/>
+                    <button name="action_reopen" type="object" string="Reopen"
+                            invisible="state != 'closed'"
+                            groups="sales_team.group_sale_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,closed"/>
+                </header>
+                <sheet>
+                    <field name="was_overridden" invisible="1"/>
+                    <div class="oe_title">
+                        <h1><field name="date"/></h1>
+                    </div>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="not was_overridden">
+                        Closed with items outstanding by
+                        <field name="closed_by_id" readonly="1" class="oe_inline"/>:
+                        <field name="override_reason" readonly="1" class="oe_inline"/>
+                    </div>
+                    <group>
+                        <group string="What the books say">
+                            <field name="order_count"/>
+                            <field name="expected_total"/>
+                            <field name="expected_fees"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="What you are holding">
+                            <field name="counted_cash"/>
+                            <field name="counted_mobile"/>
+                            <field name="counted_card"/>
+                            <field name="counted_total" class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Where the day stands">
+                            <field name="credit_total"/>
+                            <field name="variance"
+                                   decoration-danger="variance &lt; 0"
+                                   decoration-success="variance &gt;= 0"/>
+                            <field name="open_task_count"/>
+                        </group>
+                        <group string="Notes">
+                            <field name="variance_reason" nolabel="1"
+                                   placeholder="Why is the day out? e.g. 200 float taken for transport"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Credit Given" name="credit">
+                            <field name="credit_line_ids">
+                                <tree editable="bottom">
+                                    <field name="partner_id"/>
+                                    <field name="amount"/>
+                                    <field name="note"/>
+                                    <field name="invoice_id" readonly="1"
+                                           optional="show" string="Debt Raised"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </tree>
+                            </field>
+                            <p class="text-muted mt-2">
+                                Goods that left without payment. When the day closes,
+                                each line becomes a posted customer invoice, so the
+                                debt reaches the customer's balance rather than
+                                staying a note here.
+                            </p>
+                        </page>
+                        <page string="Today's Tasks" name="tasks">
+                            <field name="task_ids" readonly="1">
+                                <tree decoration-muted="state == 'done'">
+                                    <field name="name"/>
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                    <field name="state" widget="badge"
+                                           decoration-warning="state == 'in_progress'"
+                                           decoration-success="state == 'done'"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Override" name="override" invisible="state == 'closed'">
+                            <field name="override_reason" nolabel="1"
+                                   placeholder="Required only if you use Close Anyway."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="neobuk_day_close_view_tree" model="ir.ui.view">
+        <field name="name">neobuk.day.close.tree</field>
+        <field name="model">neobuk.day.close</field>
+        <field name="arch" type="xml">
+            <tree string="Day Closes" sample="1"
+                  decoration-warning="was_overridden" decoration-muted="state == 'closed'">
+                <field name="date"/>
+                <field name="order_count"/>
+                <field name="expected_total" sum="Recorded"/>
+                <field name="counted_total" sum="Counted"/>
+                <field name="credit_total" sum="Credit"/>
+                <field name="variance" sum="Variance"
+                       decoration-danger="variance &lt; 0"/>
+                <field name="open_task_count"/>
+                <field name="was_overridden"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'closed'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="neobuk_day_close_view_search" model="ir.ui.view">
+        <field name="name">neobuk.day.close.search</field>
+        <field name="model">neobuk.day.close</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="date"/>
+                <filter name="open" string="Still Open" domain="[('state','=','draft')]"/>
+                <filter name="overridden" string="Closed With Override"
+                        domain="[('was_overridden','=',True)]"/>
+                <filter name="short" string="Money Missing" domain="[('variance','&lt;',0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_month" string="Month" context="{'group_by':'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="neobuk_day_close_action" model="ir.actions.act_window">
+        <field name="name">Day Close</field>
+        <field name="res_model">neobuk.day.close</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Close today</p>
+            <p>Count what you are holding, name anyone who took goods on credit,
+               finish the day's jobs. The day will not close until it adds up -
+               and if you force it, that is recorded.</p>
+        </field>
+    </record>
+</odoo>

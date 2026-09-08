@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="neobuk_sale_order_view_form" model="ir.ui.view">
+        <field name="name">sale.order.form.neobuk</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="neobuk_fee_rule_id"
+                       options="{'no_create': True}"/>
+            </xpath>
+            <xpath expr="//group[@name='sale_total']" position="after">
+                <group name="neobuk_profit" string="True Profit"
+                       groups="sales_team.group_sale_salesman">
+                    <field name="neobuk_payment_fee"/>
+                    <field name="neobuk_delivery_margin"
+                           decoration-danger="neobuk_delivery_margin &lt; 0"/>
+                    <field name="neobuk_contribution"
+                           decoration-danger="neobuk_contribution &lt; 0"
+                           decoration-bf="1"/>
+                    <field name="neobuk_contribution_margin" widget="percentage"/>
+                    <field name="neobuk_is_loss" invisible="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="neobuk_sale_order_view_tree" model="ir.ui.view">
+        <field name="name">sale.order.tree.neobuk</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="amount_total" position="after">
+                <field name="neobuk_payment_fee" optional="hide" sum="Fees"/>
+                <field name="neobuk_contribution" optional="show" sum="Contribution"
+                       decoration-danger="neobuk_is_loss"/>
+                <field name="neobuk_is_loss" column_invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="neobuk_sale_order_view_search" model="ir.ui.view">
+        <field name="name">sale.order.search.neobuk</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                <separator/>
+                <filter name="neobuk_loss" string="Loss-Making"
+                        domain="[('neobuk_is_loss','=',True)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

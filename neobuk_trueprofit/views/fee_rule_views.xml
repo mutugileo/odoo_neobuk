@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="neobuk_fee_rule_view_tree" model="ir.ui.view">
+        <field name="name">neobuk.fee.rule.tree</field>
+        <field name="model">neobuk.fee.rule</field>
+        <field name="arch" type="xml">
+            <tree string="Payment Fees" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="provider_id"/>
+                <field name="provider_code"/>
+                <field name="percent"/>
+                <field name="fixed"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="neobuk_fee_rule_action" model="ir.actions.act_window">
+        <field name="name">Payment Fees</field>
+        <field name="res_model">neobuk.fee.rule</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Record what each payment method costs you</p>
+            <p>A card sale of 1,000 does not put 1,000 in your account. Enter the
+               percentage and any flat charge, and every order will show what you
+               actually kept.</p>
+        </field>
+    </record>
+</odoo>

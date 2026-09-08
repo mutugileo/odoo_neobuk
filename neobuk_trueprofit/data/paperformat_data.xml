@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- 80mm roll, the common thermal width. Height is generous rather than
+             continuous: wkhtmltopdf needs a fixed page, and a receipt printer
+             simply stops feeding at the end of the content. -->
+        <record id="paperformat_receipt" model="report.paperformat">
+            <field name="name">Receipt 80mm</field>
+            <field name="default" eval="False"/>
+            <field name="format">custom</field>
+            <field name="page_width">80</field>
+            <field name="page_height">297</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">3</field>
+            <field name="margin_bottom">3</field>
+            <field name="margin_left">3</field>
+            <field name="margin_right">3</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">96</field>
+        </record>
+    </data>
+</odoo>

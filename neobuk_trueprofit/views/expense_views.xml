@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="neobuk_expense_view_tree" model="ir.ui.view">
+        <field name="name">neobuk.expense.tree</field>
+        <field name="model">neobuk.expense</field>
+        <field name="arch" type="xml">
+            <tree string="Operating Expenses" editable="bottom" sample="1">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="amount" sum="Total"/>
+                <field name="is_recurring" widget="boolean_toggle"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="neobuk_expense_view_search" model="ir.ui.view">
+        <field name="name">neobuk.expense.search</field>
+        <field name="model">neobuk.expense</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="category"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('date','&gt;=',(context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="recurring" string="Recurring" domain="[('is_recurring','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_category" string="Category" context="{'group_by':'category'}"/>
+                    <filter name="group_date" string="Month" context="{'group_by':'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="neobuk_expense_action" model="ir.actions.act_window">
+        <field name="name">Operating Expenses</field>
+        <field name="res_model">neobuk.expense</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Record what the shop costs to run</p>
+            <p>Rent, airtime, transport, wages. These never touch an order, so
+               they are what stands between contribution and real profit.</p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="neobuk_shipping_rule_view_tree" model="ir.ui.view">
+        <field name="name">neobuk.shipping.rule.tree</field>
+        <field name="model">neobuk.shipping.rule</field>
+        <field name="arch" type="xml">
+            <tree string="Courier Costs" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="carrier_id"/>
+                <field name="cost_percent"/>
+                <field name="default_cost"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="neobuk_shipping_rule_action" model="ir.actions.act_window">
+        <field name="name">Courier Costs</field>
+        <field name="res_model">neobuk.shipping.rule</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Record what delivery really costs you</p>
+            <p>Free delivery is not free. Enter the courier's charge and the order
+               will show the shortfall.</p>
+        </field>
+    </record>
+</odoo>

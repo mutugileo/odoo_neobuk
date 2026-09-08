@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- binding_model_id puts each of these in the Print menu of its model. -->
+    <record id="action_report_sale_receipt" model="ir.actions.report">
+        <field name="name">Receipt</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">neobuk_trueprofit.report_sale_receipt</field>
+        <field name="report_file">neobuk_trueprofit.report_sale_receipt</field>
+        <field name="print_report_name">'Receipt - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_receipt"/>
+    </record>
+
+    <record id="action_report_credit_slip" model="ir.actions.report">
+        <field name="name">Credit Slip</field>
+        <field name="model">neobuk.day.close.credit</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">neobuk_trueprofit.report_credit_slip</field>
+        <field name="report_file">neobuk_trueprofit.report_credit_slip</field>
+        <field name="print_report_name">'Credit Slip - %s' % (object.partner_id.name or 'unnamed')</field>
+        <field name="binding_model_id" ref="model_neobuk_day_close_credit"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_receipt"/>
+    </record>
+
+    <record id="action_report_day_close_slip" model="ir.actions.report">
+        <field name="name">Day Close Slip</field>
+        <field name="model">neobuk.day.close</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">neobuk_trueprofit.report_day_close_slip</field>
+        <field name="report_file">neobuk_trueprofit.report_day_close_slip</field>
+        <field name="print_report_name">'Day Close - %s' % (object.date)</field>
+        <field name="binding_model_id" ref="model_neobuk_day_close"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_receipt"/>
+    </record>
+</odoo>

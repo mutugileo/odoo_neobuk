@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Shared receipt shell.
+
+         Deliberately not web.external_layout: that draws an A4 letterhead
+         with a logo band and footer columns, which on an 80mm roll comes out
+         as a column of wrapped fragments. A receipt needs its own frame.
+         ================================================================ -->
+    <template id="neobuk_receipt_layout">
+        <div style="width:74mm; font-family:Arial,Helvetica,sans-serif; font-size:10px; line-height:1.4; color:#000;">
+            <div style="text-align:center;">
+                <!-- Shop logo, if one is set on the company. Capped at 18mm so a
+                     tall logo cannot push the whole receipt down the roll, and
+                     greyscale-friendly since thermal printers have no colour. -->
+                <div t-if="company.logo" style="margin-bottom:3px;">
+                    <img t-att-src="image_data_uri(company.logo)"
+                         style="max-height:18mm; max-width:50mm;"/>
+                </div>
+                <div style="font-size:14px; font-weight:bold; text-transform:uppercase; letter-spacing:0.5px;">
+                    <t t-esc="company.name"/>
+                </div>
+                <div t-if="company.street" style="font-size:9px;" t-esc="company.street"/>
+                <div t-if="company.city" style="font-size:9px;"><t t-esc="company.city"/></div>
+                <div t-if="company.phone" style="font-size:9px;">Tel: <t t-esc="company.phone"/></div>
+                <div t-if="company.vat" style="font-size:9px;">
+                    <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
+                    <t t-esc="company.vat"/>
+                </div>
+            </div>
+            <div style="border-top:1px dashed #555; margin:5px 0;"/>
+            <t t-out="0"/>
+            <div style="border-top:1px dashed #555; margin:5px 0;"/>
+            <div style="text-align:center; font-size:8px; color:#444;">
+                <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d %b %Y %H:%M')"/>
+            </div>
+        </div>
+    </template>
+
+    <!-- ================================================================
+         1. Sale receipt.
+
+         Core gives a sale order an A4 quotation and nothing else. A shop
+         selling over the counter without POS has had no way to hand over a
+         receipt at all.
+         ================================================================ -->
+    <template id="report_sale_receipt_document">
+        <t t-set="company" t-value="o.company_id"/>
+        <t t-call="neobuk_trueprofit.neobuk_receipt_layout">
+            <div style="text-align:center; font-weight:bold; font-size:11px;">RECEIPT</div>
+            <div style="margin-top:3px;">
+                <div>No: <span t-field="o.name"/></div>
+                <div>Date: <span t-field="o.date_order" t-options='{"widget":"date"}'/></div>
+                <div t-if="o.partner_id">To: <span t-field="o.partner_id.name"/></div>
+                <div t-if="o.user_id">Served by: <span t-field="o.user_id.name"/></div>
+            </div>
+            <div style="border-top:1px dashed #555; margin:5px 0;"/>
+
+            <table style="width:100%; border-collapse:collapse;">
+                <t t-foreach="o.order_line.filtered(lambda l: not l.display_type)" t-as="line">
+                    <tr>
+                        <td colspan="2" style="padding-top:2px;">
+                            <span t-field="line.product_id.name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:4px;">
+                            <span t-field="line.product_uom_qty" t-options='{"widget":"float","precision":2}'/>
+                            x
+                            <span t-esc="o.currency_id.neobuk_format(line.price_unit)"/>
+                        </td>
+                        <td style="text-align:right;">
+                            <span t-esc="o.currency_id.neobuk_format(line.price_subtotal)"/>
+                        </td>
+                    </tr>
+                </t>
+            </table>
+
+            <div style="border-top:1px dashed #555; margin:5px 0;"/>
+            <table style="width:100%; border-collapse:collapse;">
+                <tr>
+                    <td>Subtotal</td>
+                    <td style="text-align:right;">
+                        <span t-esc="o.currency_id.neobuk_format(o.amount_untaxed)"/>
+                    </td>
+                </tr>
+                <tr t-if="o.amount_tax">
+                    <td>Tax</td>
+                    <td style="text-align:right;">
+                        <span t-esc="o.currency_id.neobuk_format(o.amount_tax)"/>
+                    </td>
+                </tr>
+                <tr style="font-weight:bold; font-size:12px;">
+                    <td style="border-top:1px solid #000; padding-top:2px;">TOTAL</td>
+                    <td style="border-top:1px solid #000; padding-top:2px; text-align:right;">
+                        <span t-esc="o.currency_id.neobuk_format(o.amount_total)"/>
+                    </td>
+                </tr>
+            </table>
+
+            <div t-if="o.neobuk_fee_rule_id" style="margin-top:4px;">
+                Paid by: <span t-field="o.neobuk_fee_rule_id.name"/>
+            </div>
+            <div style="text-align:center; margin-top:6px;">Thank you</div>
+        </t>
+    </template>
+
+    <template id="report_sale_receipt">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <t t-call="neobuk_trueprofit.report_sale_receipt_document"/>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- ================================================================
+         2. Credit slip.
+
+         The day close refuses credit without a named customer. This turns
+         that record into something the customer signs and you keep, which
+         is how the disagreement gets settled three weeks later.
+         ================================================================ -->
+    <template id="report_credit_slip_document">
+        <t t-set="company" t-value="o.day_close_id.company_id"/>
+        <t t-call="neobuk_trueprofit.neobuk_receipt_layout">
+            <div style="text-align:center; font-weight:bold; font-size:11px;">
+                CREDIT SLIP
+            </div>
+            <div style="text-align:center; font-size:9px;">Goods taken on account</div>
+            <div style="border-top:1px dashed #555; margin:5px 0;"/>
+
+            <div>Date: <span t-field="o.day_close_id.date"/></div>
+            <div style="margin-top:3px;">Customer:</div>
+            <div style="font-size:12px; font-weight:bold;">
+                <t t-esc="o.partner_id.name or '________________________'"/>
+            </div>
+            <div t-if="o.partner_id.phone" style="font-size:9px;">
+                Tel: <span t-field="o.partner_id.phone"/>
+            </div>
+            <div t-if="o.note" style="margin-top:3px;">For: <span t-field="o.note"/></div>
+
+            <div style="border-top:1px dashed #555; margin:5px 0;"/>
+            <table style="width:100%;">
+                <tr style="font-size:14px; font-weight:bold;">
+                    <td>AMOUNT OWED</td>
+                    <td style="text-align:right;">
+                        <span t-esc="o.currency_id.neobuk_format(o.amount)"/>
+                    </td>
+                </tr>
+            </table>
+            <div style="border-top:1px dashed #555; margin:5px 0;"/>
+
+            <div style="font-size:9px;">
+                I confirm I received the goods above and owe the amount shown.
+            </div>
+            <div style="margin-top:14px;">
+                <div style="border-top:1px solid #000; width:60%;"/>
+                <div style="font-size:9px;">Customer signature</div>
+            </div>
+            <div style="margin-top:10px;">
+                <div style="border-top:1px solid #000; width:60%;"/>
+                <div style="font-size:9px;">Served by</div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_credit_slip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <t t-call="neobuk_trueprofit.report_credit_slip_document"/>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- ================================================================
+         3. Day close slip - the Z reading.
+         ================================================================ -->
+    <template id="report_day_close_slip_document">
+        <t t-set="company" t-value="o.company_id"/>
+        <t t-call="neobuk_trueprofit.neobuk_receipt_layout">
+            <div style="text-align:center; font-weight:bold; font-size:11px;">DAY CLOSE</div>
+            <div style="text-align:center;"><span t-field="o.date"/></div>
+            <div style="border-top:1px dashed #555; margin:5px 0;"/>
+
+            <table style="width:100%;">
+                <tr><td>Orders</td><td style="text-align:right;"><span t-field="o.order_count"/></td></tr>
+                <tr>
+                    <td>Recorded sales</td>
+                    <td style="text-align:right;">
+                        <span t-esc="o.currency_id.neobuk_format(o.expected_total)"/>
+                    </td>
+                </tr>
+            </table>
+
+            <div style="border-top:1px dashed #555; margin:5px 0;"/>
+            <div style="font-weight:bold;">Counted</div>
+            <table style="width:100%;">
+                <tr><td>Cash</td><td style="text-align:right;"><span t-esc="o.currency_id.neobuk_format(o.counted_cash)"/></td></tr>
+                <tr><td>Mobile money</td><td style="text-align:right;"><span t-esc="o.currency_id.neobuk_format(o.counted_mobile)"/></td></tr>
+                <tr><td>Card / bank</td><td style="text-align:right;"><span t-esc="o.currency_id.neobuk_format(o.counted_card)"/></td></tr>
+                <tr style="font-weight:bold;">
+                    <td style="border-top:1px solid #000;">Total counted</td>
+                    <td style="border-top:1px solid #000; text-align:right;">
+                        <span t-esc="o.currency_id.neobuk_format(o.counted_total)"/>
+                    </td>
+                </tr>
+            </table>
+
+            <div style="border-top:1px dashed #555; margin:5px 0;"/>
+            <table style="width:100%;">
+                <tr>
+                    <td>Credit given</td>
+                    <td style="text-align:right;">
+                        <span t-esc="o.currency_id.neobuk_format(o.credit_total)"/>
+                    </td>
+                </tr>
+                <tr style="font-weight:bold; font-size:12px;">
+                    <td>VARIANCE</td>
+                    <td style="text-align:right;">
+                        <span t-esc="o.currency_id.neobuk_format(o.variance)"/>
+                    </td>
+                </tr>
+            </table>
+            <div t-if="o.variance_reason" style="font-size:9px; margin-top:3px;">
+                <span t-field="o.variance_reason"/>
+            </div>
+
+            <t t-if="o.credit_line_ids">
+                <div style="border-top:1px dashed #555; margin:5px 0;"/>
+                <div style="font-weight:bold;">Owed by</div>
+                <table style="width:100%;">
+                    <tr t-foreach="o.credit_line_ids" t-as="c">
+                        <td><t t-esc="c.partner_id.name or '(unnamed)'"/></td>
+                        <td style="text-align:right;">
+                            <span t-esc="o.currency_id.neobuk_format(c.amount)"/>
+                        </td>
+                    </tr>
+                </table>
+            </t>
+
+            <div t-if="o.was_overridden" style="border-top:1px dashed #555; margin:5px 0;">
+                <div style="font-weight:bold;">CLOSED WITH OVERRIDE</div>
+                <div style="font-size:9px;"><span t-field="o.override_reason"/></div>
+            </div>
+
+            <div style="margin-top:12px;">
+                <div style="border-top:1px solid #000; width:60%;"/>
+                <div style="font-size:9px;">Closed by
+                    <t t-esc="o.closed_by_id.name or ''"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_day_close_slip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <t t-call="neobuk_trueprofit.report_day_close_slip_document"/>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

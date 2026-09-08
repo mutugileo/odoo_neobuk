@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- The OpenCart original registered no menu at all: its seven screens were
+         reachable only from buttons on one report page. Odoo gets proper menus. -->
+    <menuitem id="menu_neobuk_root" name="Shop Day" sequence="55"
+              web_icon="neobuk_trueprofit,static/description/icon.png"/>
+
+    <menuitem id="menu_neobuk_close" name="Day Close"
+              parent="menu_neobuk_root" action="neobuk_day_close_action" sequence="10"/>
+    <menuitem id="menu_neobuk_tasks" name="Shop Tasks"
+              parent="menu_neobuk_root" action="neobuk_shop_task_action" sequence="20"/>
+
+    <menuitem id="menu_neobuk_analysis" name="Analysis"
+              parent="menu_neobuk_root" sequence="30"/>
+    <menuitem id="menu_neobuk_profit" name="Profit Analysis"
+              parent="menu_neobuk_analysis" action="neobuk_profit_report_action" sequence="10"/>
+    <menuitem id="menu_neobuk_expenses" name="Operating Expenses"
+              parent="menu_neobuk_analysis" action="neobuk_expense_action" sequence="20"/>
+
+    <menuitem id="menu_neobuk_config" name="Configuration"
+              parent="menu_neobuk_root" sequence="90"
+              groups="sales_team.group_sale_manager"/>
+    <menuitem id="menu_neobuk_fee_rules" name="Payment Fees"
+              parent="menu_neobuk_config" action="neobuk_fee_rule_action" sequence="10"/>
+    <menuitem id="menu_neobuk_shipping_rules" name="Courier Costs"
+              parent="menu_neobuk_config" action="neobuk_shipping_rule_action" sequence="20"/>
+</odoo>

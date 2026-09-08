@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="neobuk_shop_task_view_tree" model="ir.ui.view">
+        <field name="name">neobuk.shop.task.tree</field>
+        <field name="model">neobuk.shop.task</field>
+        <field name="arch" type="xml">
+            <tree string="Shop Tasks" editable="bottom" sample="1"
+                  decoration-muted="state == 'done'">
+                <field name="sequence" widget="handle"/>
+                <field name="date"/>
+                <field name="name"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="is_recurring" widget="boolean_toggle"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-success="state == 'done'"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="neobuk_shop_task_view_kanban" model="ir.ui.view">
+        <field name="name">neobuk.shop.task.kanban</field>
+        <field name="model">neobuk.shop.task</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column" sample="1">
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click p-2">
+                            <strong><field name="name"/></strong>
+                            <div class="text-muted"><field name="date"/></div>
+                            <div class="mt-1">
+                                <field name="user_id" widget="many2one_avatar_user"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="neobuk_shop_task_view_search" model="ir.ui.view">
+        <field name="name">neobuk.shop.task.search</field>
+        <field name="model">neobuk.shop.task</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="today" string="Today"
+                        domain="[('date','=',context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="open" string="Unfinished" domain="[('state','!=','done')]"/>
+                <filter name="recurring" string="Every Day" domain="[('is_recurring','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by':'state'}"/>
+                    <filter name="group_date" string="Day" context="{'group_by':'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="neobuk_shop_task_action" model="ir.actions.act_window">
+        <field name="name">Shop Tasks</field>
+        <field name="res_model">neobuk.shop.task</field>
+        <field name="view_mode">kanban,tree</field>
+        <field name="context">{'search_default_today': 1, 'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">What has to happen today</p>
+            <p>Bank the takings, restock, chase a debtor. Tick "Every Day" and the
+               job reappears on tomorrow's close by itself.</p>
+        </field>
+    </record>
+</odoo>

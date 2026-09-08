@@ -1,0 +1,10 @@
+# Build artefacts
+dist/
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+
+# macOS
+.DS_Store

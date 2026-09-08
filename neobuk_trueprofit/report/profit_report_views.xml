@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="neobuk_profit_report_view_pivot" model="ir.ui.view">
+        <field name="name">neobuk.profit.report.pivot</field>
+        <field name="model">neobuk.profit.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Profit Analysis" sample="1">
+                <field name="product_id" type="row"/>
+                <field name="revenue" type="measure"/>
+                <field name="cogs" type="measure"/>
+                <field name="gross_margin" type="measure"/>
+                <field name="payment_fee" type="measure"/>
+                <field name="contribution" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="neobuk_profit_report_view_graph" model="ir.ui.view">
+        <field name="name">neobuk.profit.report.graph</field>
+        <field name="model">neobuk.profit.report</field>
+        <field name="arch" type="xml">
+            <graph string="Profit Analysis" type="line" sample="1">
+                <field name="date" interval="day"/>
+                <field name="contribution" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="neobuk_profit_report_view_tree" model="ir.ui.view">
+        <field name="name">neobuk.profit.report.tree</field>
+        <field name="model">neobuk.profit.report</field>
+        <field name="arch" type="xml">
+            <tree string="Profit Analysis" create="false" sample="1">
+                <field name="date"/>
+                <field name="order_id"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="quantity" sum="Qty"/>
+                <field name="revenue" sum="Revenue"/>
+                <field name="cogs" sum="COGS"/>
+                <field name="gross_margin" sum="Gross Margin"/>
+                <field name="payment_fee" sum="Fees"/>
+                <field name="contribution" sum="Contribution"
+                       decoration-danger="contribution &lt; 0"/>
+                <field name="currency_id" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="neobuk_profit_report_view_search" model="ir.ui.view">
+        <field name="name">neobuk.profit.report.search</field>
+        <field name="model">neobuk.profit.report</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="order_id"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <filter name="confirmed" string="Confirmed Only"
+                        domain="[('state','in',('sale','done'))]"/>
+                <filter name="losses" string="Loss-Making Lines"
+                        domain="[('contribution','&lt;',0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_product" string="Product" context="{'group_by':'product_id'}"/>
+                    <filter name="group_categ" string="Category" context="{'group_by':'categ_id'}"/>
+                    <filter name="group_partner" string="Customer" context="{'group_by':'partner_id'}"/>
+                    <filter name="group_user" string="Salesperson" context="{'group_by':'user_id'}"/>
+                    <filter name="group_date" string="Month" context="{'group_by':'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="neobuk_profit_report_action" model="ir.actions.act_window">
+        <field name="name">Profit Analysis</field>
+        <field name="res_model">neobuk.profit.report</field>
+        <field name="view_mode">pivot,graph,tree</field>
+        <field name="context">{'search_default_confirmed': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No confirmed orders yet</p>
+            <p>Once you have sales, this shows what each product, customer and
+               salesperson actually contributed after fees and delivery.</p>
+        </field>
+    </record>
+</odoo>
