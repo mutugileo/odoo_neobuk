@@ -1,0 +1,190 @@
+<section class="container py-4">
+
+    <!-- ===================== HERO ===================== -->
+    <div class="text-center pb-4 border-bottom">
+        <h1 class="display-4 font-weight-bold">Day Close &amp; Credit</h1>
+        <p class="lead text-muted">
+            Count the money. Name the debts. Then close.
+        </p>
+        <p class="font-weight-bold text-success mb-0">
+            Odoo 17.0 &nbsp;&middot;&nbsp; Community &amp; Enterprise
+        </p>
+    </div>
+
+    <!-- ===================== THE PROBLEM ===================== -->
+    <div class="py-4">
+        <h2 class="font-weight-bold">Odoo tells you your margin</h2>
+        <p class="text-muted">
+            It does not tell you whether the takings are actually in the drawer,
+            who walked out with goods on a promise, or whether the day's work got
+            done. In a shop taking cash, mobile money and card, those are the three
+            questions that matter at closing time, and none of them has an answer
+            in standard Odoo.
+        </p>
+    </div>
+
+    <!-- ===================== THE CLOSE ===================== -->
+    <div class="py-2">
+        <h2 class="font-weight-bold mb-4">The day close</h2>
+
+        <div class="border rounded p-3 mb-3">
+            <h3 class="h5 font-weight-bold">It will not close until it adds up</h3>
+            <p class="text-muted mb-0">
+                Count cash, mobile money and card against what the day's confirmed
+                orders say you should hold. The close is refused while shop tasks are
+                unfinished, while credit has been given without naming a customer, or
+                while the day is out beyond your tolerance with no reason written.
+            </p>
+        </div>
+
+        <div class="border rounded p-3 mb-3">
+            <h3 class="h5 font-weight-bold">You can force it, and that is recorded</h3>
+            <p class="text-muted mb-0">
+                A hard block at closing time gets worked around, and then the data is
+                worse than if nothing had been enforced. So <em>Close Anyway</em>
+                exists — it asks for a reason and stamps your name and the time on the
+                day. Overridden days are filterable, and a shop whose days are mostly
+                overridden is telling you something worth knowing.
+            </p>
+        </div>
+
+        <div class="border rounded p-3">
+            <h3 class="h5 font-weight-bold">Today's jobs, without retyping them</h3>
+            <p class="text-muted mb-0">
+                Bank the takings, restock, chase a debtor. Mark a job
+                <em>Every Day</em> and it reappears on tomorrow's close by itself.
+            </p>
+        </div>
+    </div>
+
+    <img src="screenshot_day_close.png" class="img-fluid border rounded my-4"
+         alt="Day close summary showing counted takings against recorded sales"/>
+
+    <!-- ===================== CREDIT ===================== -->
+    <div class="py-2">
+        <h2 class="font-weight-bold mb-4">Credit becomes a debt you can collect</h2>
+
+        <div class="border rounded p-3 mb-3">
+            <h3 class="h5 font-weight-bold">Named, not vague</h3>
+            <p class="text-muted mb-0">
+                A short till and "someone took goods" are the same fact. Naming the
+                customer is what turns one into the other, so the close insists on it.
+            </p>
+        </div>
+
+        <div class="border rounded p-3 mb-3">
+            <h3 class="h5 font-weight-bold">A posted invoice, not a note</h3>
+            <p class="text-muted mb-0">
+                When the day closes, each credit entry raises a posted customer
+                invoice. The debt reaches the customer's balance and behaves like any
+                other receivable in Odoo — rather than sitting in a side table this
+                module happens to keep.
+            </p>
+        </div>
+
+        <div class="border rounded p-3">
+            <h3 class="h5 font-weight-bold">Signed for</h3>
+            <p class="text-muted mb-0">
+                Print a slip showing what was taken and what is owed, with signature
+                lines for the customer and whoever served them. It is what settles the
+                disagreement three weeks later.
+            </p>
+        </div>
+    </div>
+
+    <img src="screenshot_credit_slip.png" class="img-fluid border rounded my-4"
+         alt="Credit slip with amount owed and signature lines"/>
+
+    <!-- ===================== PROFIT ===================== -->
+    <div class="py-2">
+        <h2 class="font-weight-bold mb-4">What you actually made</h2>
+
+        <div class="border rounded p-3 mb-3">
+            <h3 class="h5 font-weight-bold">Payment fees you pay, not fees you charge</h3>
+            <p class="text-muted mb-0">
+                A card sale of 1,000 does not put 1,000 in your account. Set the
+                percentage and any flat charge per payment method, and every order
+                shows what the provider kept.
+            </p>
+        </div>
+
+        <div class="border rounded p-3 mb-3">
+            <h3 class="h5 font-weight-bold">Delivery that is not free</h3>
+            <p class="text-muted mb-0">
+                Record what the courier charges you per delivery method, as a flat cost
+                or a share of what the customer paid. Orders show the shortfall where
+                you subsidised the delivery.
+            </p>
+        </div>
+
+        <div class="border rounded p-3">
+            <h3 class="h5 font-weight-bold">Built on Odoo's own margin</h3>
+            <p class="text-muted mb-0">
+                Cost of goods, the cost snapshot taken when a line is created, unit
+                conversion and currency conversion all come from Odoo's standard sale
+                margin. This adds the costs Odoo does not model rather than
+                recalculating the ones it already does — so the figures agree with the
+                rest of your database.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===================== RECEIPTS ===================== -->
+    <div class="py-2">
+        <h2 class="font-weight-bold mb-3">Three receipts on an 80mm roll</h2>
+        <p class="text-muted">
+            Sale receipt, credit slip, and the day close summary. Your company logo
+            appears on all three when one is set.
+        </p>
+        <img src="screenshot_receipt.png" class="img-fluid border rounded"
+             alt="Sale receipt printed on an 80mm roll"/>
+    </div>
+
+    <!-- ===================== SETUP ===================== -->
+    <div class="py-4">
+        <h2 class="font-weight-bold mb-3">Setting it up</h2>
+        <ol class="text-muted">
+            <li class="mb-2">Install the module.</li>
+            <li class="mb-2">Open <strong>Sales &rarr; Configuration &rarr; Settings</strong> and set your payment fees, courier costs and variance tolerance.</li>
+            <li class="mb-2">Go to <strong>Shop Day &rarr; Day Close</strong> at the end of trading.</li>
+        </ol>
+        <p class="text-muted">
+            Everything is stored per company, so a multi-company database keeps each
+            shop's takings, debts and tasks separate.
+        </p>
+    </div>
+
+    <!-- ===================== HONEST NOTES ===================== -->
+    <div class="border rounded p-3 my-4">
+        <h2 class="h5 font-weight-bold">Worth knowing before you buy</h2>
+        <ul class="text-muted mb-0">
+            <li class="mb-2">
+                This works on <strong>sales orders</strong>. If you sell through Odoo
+                Point of Sale, POS already has its own cash control and this module
+                does not extend it.
+            </li>
+            <li class="mb-2">
+                Built and tested against <strong>Odoo 17.0</strong>. It has not been
+                verified on 16.0 or 18.0.
+            </li>
+            <li class="mb-2">
+                The receipts need <strong>wkhtmltopdf</strong>, which Odoo requires for
+                any PDF report.
+            </li>
+            <li>
+                Credit raises a posted invoice, which means real accounting entries.
+                The income account used is configurable in Settings.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ===================== FOOTER ===================== -->
+    <div class="text-center pt-3 border-top text-muted">
+        <p class="font-weight-bold mb-1">Codzure Solutions</p>
+        <p class="mb-0">
+            Support and feature requests:
+            <a href="mailto:codzuresolutions@gmail.com">codzuresolutions@gmail.com</a>
+        </p>
+    </div>
+
+</section>

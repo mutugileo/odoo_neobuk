@@ -79,6 +79,11 @@ Tested against Odoo 17.0.
         'report/receipt_reports.xml',
         'views/menus.xml',
     ],
+    # Odoo's listing score checks for a cover image; without this key the
+    # module scans as having no thumbnail.
+    'images': [
+        'static/description/cover.png',
+    ],
     'installable': True,
     'application': True,
     'auto_install': False,
